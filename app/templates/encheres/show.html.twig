@@ -3,6 +3,17 @@
 {% block title %} Détail Enchères{% endblock %}
 
 {% block body %}
+
+{# affichage de message #}
+  {% for type, messages in app.flashes %}
+      {% for message in messages %}
+          <div class="alert alert-dismissible alert-{{type}}">
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              <p class="mb-0 fs-4">{{message}}</p>
+          </div>
+      {% endfor %}
+  {% endfor %}
+
 <div class="mb-5">
     <h1>Détails d'enchère</h1>
 </div>
@@ -16,7 +27,26 @@
   <div class="card-body">
     <p class="card-text">{{ item.description}}</p>
   </div>
-  
 </div>
 
+{% if app.user %}
+  <div>
+    <h1>Placer une enchère :</h1>
+    {{form_start(formView)}}
+      {{ form_label(formView.amount, 'Montant :')}}
+      {{ form_widget(formView.amount, {
+        attr : {
+          'type': 'number',
+          'class': 'form-control border border-1 border-dark',
+          'autofocus': 'true',
+        },
+        type : 'number',
+        })}}
+      <div class="text-danger small fs-6">
+        {{ form_errors(formView.amount)}}
+      </div>     
+      <input type="submit" value="Valider" {% if offered %}disabled{% endif %}> 
+    {{form_end(formView)}}
+    </div> 
+{% endif %}
 {% endblock %}

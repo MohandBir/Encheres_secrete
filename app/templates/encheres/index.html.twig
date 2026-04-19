@@ -3,6 +3,17 @@
 {% block title %} Accueil Enchères{% endblock %}
 
 {% block body %}
+
+{# affichage de message #}
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-dismissible alert-{{type}}">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <p class="mb-0 fs-4">{{message}}</p>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
 <div class="mb-3">
     <h1>TOP ENCHÈRE</h1>
 </div>
