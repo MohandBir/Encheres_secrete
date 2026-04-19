@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\Item;
+use App\Repository\CategoryRepository;
 use App\Repository\ItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,11 +13,15 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class EncheresController extends AbstractController
 {
-    #[Route('/', name: 'app_encheres')]
-    public function index( ItemRepository $itemRepo,EntityManagerInterface $em): Response
+    #[Route('/{id<[0-9]+>?null}', name: 'app_encheres')]
+    public function index(?Category $category, ItemRepository $itemRepo, CategoryRepository $categoryRepo, EntityManagerInterface $em): Response
     {
+        $id = $category ? (int) $category->getId() : null;
+        $items = $itemRepo->findByCategory($id);
+
         return $this->render('encheres/index.html.twig', [
-            'items' => $itemRepo->findAll(),
+            'items' => $items,
+            'categories' => $categoryRepo->findAll(),
         ]);
     }
  

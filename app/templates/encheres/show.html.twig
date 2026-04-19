@@ -10,7 +10,7 @@
   <h3 class="card-header">{{ item.title}}</h3>
   <div class="card-body">
     <h5 class="card-title"><span>Prix de départ : </span>{{ item.StartingPrice ~ ' €'}}</h5>
-    <h6 class="card-subtitle text-muted">{{ item.status == 'unpublished' ? 'Enchère non ouverte' : (item.status == 'published' ? 'Enchère ouverte': 'Enchère clôturé')}}</h6>
+    <h6 class="card-subtitle text-muted">{{ item.status == 'unpublished' ? 'Enchère non ouverte' : (item.status == 'published' ? 'Enchère ouverte': 'Enchère clôturé - (Gagnant : )')}}</h6>
   </div>
 
   <div class="card-body">
