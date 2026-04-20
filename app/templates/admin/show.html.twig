@@ -5,14 +5,14 @@
 {% block body %}
 
 {# affichage de message #}
-  {% for type, messages in app.flashes %}
-      {% for message in messages %}
-          <div class="alert alert-dismissible alert-{{type}}">
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-              <p class="mb-0 fs-4">{{message}}</p>
-          </div>
-      {% endfor %}
-  {% endfor %}
+{% for type, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-dismissible alert-{{type}}">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <p class="mb-0 fs-4">{{message}}</p>
+        </div>
+    {% endfor %}
+{% endfor %}
 
 <div class="mb-5">
     <h1>Détails d'enchère</h1>
@@ -28,19 +28,24 @@
     <p class="card-text">{{ item.description}}</p>
   </div>
   <div class="card">
-      <h4 class="ms-3">Enchérisseurs : </h4>
     <ul>
-        {% for offer in item.offers %}
-            <li>
-              <span>{{offer.user.email|split('@')[0]}} : </span>
-              <span>{{offer.amount}} € </span>
-            </li>
-        {% endfor %}
+      {% for offer in item.offers %}
+        <h4 class="ms-3">Enchérisseurs : </h4>
+        <li>
+          <span>{{offer.user.email|split('@')[0]}} : </span>
+          <span>{{offer.amount}} € </span>
+        </li>
+      {% endfor %}
     </ul>
   </div>
 </div>
-<div>
-    <a href="" class="btn  btn-primary">Publier</a>
+<div class="d-flex justify-content-between">
+  {% if item.status in ['unpublished', 'published'] %}
+  <form method="post" action="{{path('app_admin_change_status', {id: item.id})}}" >
+    <input type="hidden" name="token" value="{{ csrf_token('change') }}">
+    <button type="submit" class="btn btn-primary" value="">{{ item.status == 'unpublished' ? 'Publier' : 'Mettre non publiée'}}</button>
+  </form> 
+  {% endif %}
 </div>
 
 {% endblock %}
