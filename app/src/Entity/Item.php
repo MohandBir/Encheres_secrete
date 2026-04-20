@@ -40,6 +40,9 @@ class Item
     #[ORM\OneToMany(targetEntity: Offer::class, mappedBy: 'item', orphanRemoval: true)]
     private Collection $offers;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?User $winner = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -149,6 +152,18 @@ class Item
                 $offer->setItem(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getWinner(): ?User
+    {
+        return $this->winner;
+    }
+
+    public function setWinner(?User $winner): static
+    {
+        $this->winner = $winner;
 
         return $this;
     }
