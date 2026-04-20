@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Offer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Query\Limit;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,13 +18,16 @@ class OfferRepository extends ServiceEntityRepository
     }
 
 
-       public function findByExampleField($value): array
+       public function findWinner($item): array
        {
            return $this->createQueryBuilder('o')
-               ->andWhere('o.exampleField = :val')
-               ->setParameter('val', $value)
-               ->orderBy('o.id', 'ASC')
-               ->setMaxResults(10)
+               ->leftJoin('o.item', 'i')
+               ->addSelect('i')
+               ->where('o.item = :item')
+               ->setParameter('item', $item)
+               ->orderBy('o.amount', 'DESC')
+               ->leftJoin('o.user', 'u')
+               ->addSelect('u')
                ->getQuery()
                ->getResult()
            ;

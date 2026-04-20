@@ -21,16 +21,17 @@
   <h3 class="card-header">{{ item.title}}</h3>
   <div class="card-body">
     <h5 class="card-title"><span>Prix de départ : </span>{{ item.StartingPrice ~ ' €'}}</h5>
-    <h6 class="card-subtitle text-muted">{{ item.status == 'unpublished' ? 'Enchère non ouverte' : (item.status == 'published' ? 'Enchère ouverte': 'Enchère clôturé - (Gagnant : )')}}</h6>
+    <h6 class="card-subtitle text-muted">{{ item.status == 'unpublished' ? 'Enchère non ouverte' : (item.status == 'published' ? 'Enchère ouverte': 'Enchère clôturé')}}</h6>
   </div>
 
   <div class="card-body">
     <p class="card-text">{{ item.description}}</p>
   </div>
+  {% if item.offers is not empty %}
   <div class="card">
     <ul>
+      <h4>Enchérisseurs : </h4>
       {% for offer in item.offers %}
-        <h4 class="ms-3">Enchérisseurs : </h4>
         <li>
           <span>{{offer.user.email|split('@')[0]}} : </span>
           <span>{{offer.amount}} € </span>
@@ -38,6 +39,7 @@
       {% endfor %}
     </ul>
   </div>
+  {% endif %}
 </div>
 <div class="d-flex justify-content-between">
   {% if item.status in ['unpublished', 'published'] %}
@@ -45,6 +47,18 @@
     <input type="hidden" name="token" value="{{ csrf_token('change') }}">
     <button type="submit" class="btn btn-primary" value="">{{ item.status == 'unpublished' ? 'Publier' : 'Mettre non publiée'}}</button>
   </form> 
+  {% endif %}
+  {% if item.offers is not empty and not item.winner%}
+    <form action="{{path('app_admin_close', {id: item.id})}}" method="post">
+      <input type="hidden" name="token" value="{{ csrf_token('close') }}">
+      <button type="submit" class="btn btn-primary">Clôturer</button>
+    </form>
+  {% endif %}
+</div>
+<div class="text-center">
+  {% if item.winner %}
+  <p class="fs-5">L'enchère est remporté par : <span class="fs-4 fw-bold">{{item.winner.email|split('@',)[0]}}</span></p>
+  
   {% endif %}
 </div>
 

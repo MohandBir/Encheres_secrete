@@ -14,24 +14,26 @@
         {% endfor %}
     {% endfor %}
 
-<div class="mb-3">
+<div class="mb-4">
     <h1>Espace administrateur</h1>
 </div>
-<div class="d-flex flex-row justify-content-between">
-    <ul class="d-flex flex-column  gap-3 list-unstyled">
-        <li>
-            <a href="{{ path('app_admin_index') }}" class="text-decoration-none">
-                <button type="button" class="btn {{app.request.get('id') == 'null' ? 'btn-primary' : 'btn-outline-primary'}}">Toutes les categories</button>
-            </a>
-        </li>
-    {% for category in categories %}
-        <li>
-            <a href="{{ path('app_admin_index', {id: category.id}) }}" class="text-decoration-none">
-                <button type="button" class="btn {{app.request.get('id') == category.id ? 'btn-primary' : 'btn-outline-primary'}}">{{category.name}}</button>
-            </a>
-        </li>
-    {% endfor %}
-    </ul>
+<div class="d-flex flex-row">
+    <div>
+        <ul class="d-flex flex-column  gap-3 list-unstyled">
+            <li>
+                <a href="{{ path('app_admin_index') }}" class="text-decoration-none">
+                    <button type="button" class="btn {{app.request.get('id') == 'null' ? 'btn-primary' : 'btn-outline-primary'}}">Toutes les categories</button>
+                </a>
+            </li>
+        {% for category in categories %}
+            <li>
+                <a href="{{ path('app_admin_index', {id: category.id}) }}" class="text-decoration-none">
+                    <button type="button" class="btn {{app.request.get('id') == category.id ? 'btn-primary' : 'btn-outline-primary'}}" style="min-width: 98.05px;">{{category.name}}</button>
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
     <div class="d-flex flex-row flex-wrap gap-4 justify-content-center">
         {% for item in items %}       
             <a href="{{path('app_admin_show', {"id": item.id})}}" class="text-decoration-none">

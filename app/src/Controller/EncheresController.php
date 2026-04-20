@@ -34,7 +34,6 @@ final class EncheresController extends AbstractController
     #[Route('/show/{id}', name: 'app_encheres_show')]
     public function show($id, Request $request,Item $item, OfferRepository $offerRepo, EntityManagerInterface $em): Response
     {
-        // dd($this->getUser());
         $form = $this->createForm(OfferType::class);
         $form->handleRequest($request);
 
@@ -42,8 +41,12 @@ final class EncheresController extends AbstractController
             'user' => $this->getUser(),
             'item' => $item,
         ]);
-        
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($item->getStatus() === 'closed') {
+                $this->addFlash('danger', 'Cet enchères est fermée!');
+
+                return $this->redirectToRoute('app_encheres_show', ['id' => $id]);
+            }
             if ($existingOffer) {
                 $this->addFlash('danger', 'vous avez déja un offre pour cet ojbet !');
                 return $this->redirectToRoute('app_encheres_show', ['id' => $id]);
@@ -65,7 +68,7 @@ final class EncheresController extends AbstractController
                 return $this->redirectToRoute('app_encheres');
             }
         }
-       
+ 
         return $this->render('encheres/show.html.twig', [
             'item' => $item,
             'formView' => $form->createView(),

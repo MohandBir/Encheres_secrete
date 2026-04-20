@@ -40,7 +40,8 @@ class Item
     #[ORM\OneToMany(targetEntity: Offer::class, mappedBy: 'item', orphanRemoval: true)]
     private Collection $offers;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $winner = null;
 
     public function __construct()

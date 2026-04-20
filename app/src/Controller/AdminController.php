@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Item;
-use App\Entity\Offer;
 use App\Repository\CategoryRepository;
 use App\Repository\ItemRepository;
 use App\Repository\OfferRepository;
@@ -19,6 +18,10 @@ final class AdminController extends AbstractController
     #[Route('/admin/{id<[0-9]+>?null}', name: 'app_admin_index')]
     public function index(?Category $category, ItemRepository $itemRepo, CategoryRepository $categoryRepo): Response
     {
+        if ( !$this->IsGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('app_login');
+        }
+
         $id = $category ? (int) $category->getId() : null;
         $items = $itemRepo->findByCategoryWithOffers($id);
         return $this->render('admin/index.html.twig', [
@@ -30,6 +33,10 @@ final class AdminController extends AbstractController
     #[Route('/admin/show/{id<[0-9]+>}', name: 'app_admin_show')]
     public function show($id, ItemRepository $itemRepo, OfferRepository $offerRepo): Response
     {
+        if ( !$this->IsGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('app_login');
+        } 
+
         $item = $itemRepo->find($id);
         $offer = $offerRepo->findOneBy(['item' => $item]);
         if ($offer) {
@@ -42,8 +49,12 @@ final class AdminController extends AbstractController
     } 
 
     #[Route('/admin/change-status/{id}', name: 'app_admin_change_status')]
-    public function changeStatus(Item $item, OfferRepository $offerRepo, EntityManagerInterface $em, Request $request): Response
+    public function changeStatus(Item $item, OfferRepository $offerRepo, EntityManagerInterface $em, Request $request)
     {
+        if ( !$this->IsGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('app_login');
+        }
+
         $offer = $offerRepo->findOneBy(['item' => $item]);
 
         $submitedToken = $request->getPayload()->get('token');
@@ -62,11 +73,45 @@ final class AdminController extends AbstractController
      
                 return $this->redirectToRoute('app_admin_index');
             } else {
-                $this->addFlash('danger', 'L\'enchère possède des enréchisseur!!');
+                $this->addFlash('danger', 'L\'enchère possède des enchérisseur!!');
      
                 return $this->redirectToRoute('app_admin_show', ['id' => $item->getId()]);
             }
 
         }
+    }
+
+    #[Route('/admin/show/close/{id<[0-9]+>}', name: 'app_admin_close')]
+    public function close($id, Item $item, ItemRepository $itemRepo, OfferRepository $offerRepo, EntityManagerInterface $em, Request $request): Response
+    {
+        if ( !$this->IsGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('app_login');
+        }  
+
+        $item = $itemRepo->findItemWithOffers($id, $offer=null);
+        
+        $submitedToken = $request->getPayload()->get('token');
+        if ($this->IsCsrfTokenValid('close', $submitedToken)) {
+
+            if (!empty($item->getOffers()) && $item->getStatus() !== 'closed') {
+                $offer = $offerRepo->findWinner($item)[0]; 
+                $item
+                    ->setWinner($offer->getUser())
+                    ->setStatus('closed')
+                    ;
+                $em->flush();
+                $this->addFlash('success', 'L\'enchère est clôturé avec succès');
+    
+                return $this->redirectToRoute('app_admin_show', [
+                    'id' => $id,
+                    'item' => $item,
+                ]);
+            } 
+        }
+
+        return $this->redirectToRoute('app_admin_show', [
+            'id' => $id,
+            'item' => $item,
+        ]);      
     }
 }
