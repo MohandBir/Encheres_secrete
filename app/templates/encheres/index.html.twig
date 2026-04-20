@@ -35,17 +35,17 @@
 </div>
 <div class="d-flex flex-row flex-wrap gap-4 justify-content-center">
     {% for item in items %}       
+        {% if item.status in ['published', 'closed'] %}
         <a href="{{path('app_encheres_show', {id: item.id})}}" class="text-decoration-none">
             <div class="card border-primary " style=" min-width: 250px; min-height: 140.39px">
                 <div class="card-header fw-bold">{{ item.title}}</div>
                 <div class="card-body">
                     <h4 class="card-title">{{item.StartingPrice ~ ' €'}}</h4>
-                    {% if item.status in ['published', 'closed'] %}
                     <span class="card-text fs-5">{{ item.status == 'published' ? 'Enchère ouverte': 'Enchère clôturé'}}</span>
-                    {% endif %}
                 </div>
             </div>
         </a>
+        {% endif %}
     {% endfor %}
 </div>
 {% endblock %}

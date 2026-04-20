@@ -34,13 +34,22 @@
     </ul>
     <div class="d-flex flex-row flex-wrap gap-4 justify-content-center">
         {% for item in items %}       
-            <a href="{{path('app_encheres_show', {id: item.id})}}" class="text-decoration-none">
+            <a href="{{path('app_admin_show', {"id": item.id})}}" class="text-decoration-none">
                 <div class="card border-primary " style=" min-width: 250px">
                     <div class="card-header fw-bold">{{ item.title}}</div>
                     <div class="card-body">
                         <h4 class="card-title">{{item.StartingPrice ~ ' €'}}</h4>
-                        <span class="card-text fs-5">{{ item.status == 'unpublished' ? 'Enchère non ouverte' : (item.status == 'published' ? 'Enchère ouverte': 'Enchère clôturé')}}</span>
+                        <div class="d-flex justify-content-between">
+                            <span class="card-text fs-5">{{ item.status == 'unpublished' ? 'Enchère non ouverte' : (item.status == 'published' ? 'Enchère ouverte': 'Enchère clôturé')}}</span>
+                            <span class="card-text fs-5">
+                                 {% if item.offers is not empty %}👨🏻{{item.offers|length}} 
+                                 {% else %}
+                                    0
+                                 {% endif %}
+                            </span>
+                        </div>
                     </div>
+
                 </div>
             </a>
         {% endfor %}

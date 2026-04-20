@@ -30,6 +30,40 @@ class ItemRepository extends ServiceEntityRepository
             return $qb->getQuery()->getResult(); 
        }
 
+        public function findByCategoryWithOffers($id = null): array
+       {
+           $qb =  $this->createQueryBuilder('i')
+                ->leftJoin('i.categories','c')
+                ->addSelect('c')
+                ->leftJoin('i.offers','o')
+                ->addSelect('o');
+                if ($id != null) {
+                    $qb
+                    ->where('c.id = :id')
+                    ->setParameter('id', $id);
+                }
+                        
+            return $qb->getQuery()->getResult(); 
+       }
+
+        public function findItemWithOffers($id, $offer = null)
+       {
+           $qb =  $this->createQueryBuilder('i')
+                ->leftJoin('i.offers','o')
+                ->addSelect('o')
+                ->where('o.item = :id')
+                ->setParameter('id', $id);
+                if ($offer != null) {
+                    $qb  
+                    ->leftJoin('o.user','u')
+                    ->addSelect('u')
+                    ->Where('u.id = o.user')
+                    ;
+                }
+
+            return $qb->getQuery()->getOneOrNullResult(); 
+       }
+
     //    public function findOneBySomeField($value): ?Item
     //    {
     //        return $this->createQueryBuilder('i')

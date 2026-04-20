@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Détail Enchères{% endblock %}
+
+{% block body %}
+
+{# affichage de message #}
+  {% for type, messages in app.flashes %}
+      {% for message in messages %}
+          <div class="alert alert-dismissible alert-{{type}}">
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              <p class="mb-0 fs-4">{{message}}</p>
+          </div>
+      {% endfor %}
+  {% endfor %}
+
+<div class="mb-5">
+    <h1>Détails d'enchère</h1>
+</div>
+<div class="card mb-3">
+  <h3 class="card-header">{{ item.title}}</h3>
+  <div class="card-body">
+    <h5 class="card-title"><span>Prix de départ : </span>{{ item.StartingPrice ~ ' €'}}</h5>
+    <h6 class="card-subtitle text-muted">{{ item.status == 'unpublished' ? 'Enchère non ouverte' : (item.status == 'published' ? 'Enchère ouverte': 'Enchère clôturé - (Gagnant : )')}}</h6>
+  </div>
+
+  <div class="card-body">
+    <p class="card-text">{{ item.description}}</p>
+  </div>
+  <div class="card">
+      <h4 class="ms-3">Enchérisseurs : </h4>
+    <ul>
+        {% for offer in item.offers %}
+            <li>
+              <span>{{offer.user.email|split('@')[0]}} : </span>
+              <span>{{offer.amount}} € </span>
+            </li>
+        {% endfor %}
+    </ul>
+  </div>
+</div>
+<div>
+    <a href="" class="btn  btn-primary">Publier</a>
+</div>
+
+{% endblock %}
