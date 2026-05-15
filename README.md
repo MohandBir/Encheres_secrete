@@ -58,7 +58,8 @@ composer install
 
 Configurez votre `.env` :
 ```env
-DATABASE_URL="mysql://user:password@127.0.0.1:3306/encheres_secretes"
+DATABASE_URL="mysql://user:pwd@mysql:3306/encheres?serverVersion=8.0.32&charset=utf8mb4"
+
 ```
 Lancer le projet avec Docker
 ```bash
